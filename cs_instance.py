@@ -759,9 +759,14 @@ class AnsibleCloudStackInstance(AnsibleCloudStack):
         args['size']                = self.module.params.get('disk_size')
         args['securitygroupnames']  = ','.join(self.module.params.get('security_groups'))
         args['affinitygroupnames']  = ','.join(self.module.params.get('affinity_groups'))
+	
+        send_args = {}
+        for k,v in args.iteritems():
+            if(v != ""):
+                send_args[k] = args[k]
 
         if not self.module.check_mode:
-            instance = self.cs.deployVirtualMachine(**args)
+            instance = self.cs.deployVirtualMachine(**send_args)
 
             if 'errortext' in instance:
                 self.module.fail_json(msg="Failed: '%s'" % instance['errortext'])
